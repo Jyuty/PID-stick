@@ -13,15 +13,8 @@ void setup() {
 }
 
 void loop() {
-  if(i > 1) i = 0;
-  else i++;
   
-  dist = sonarDist(sonarTrigPIN,sonarEchoPIN);
-  if (dist > 260) dist = 260; //ограничиваем макс расстояние до длинны жёлоба
-  dist3[i] = dist;
-  Serial.print(dist);
-  Serial.print(',');
-  fdist = middle_of_3(dist3[0],dist3[1],dist3[2]);
+  fdist = sonarDist(sonarTrigPIN,sonarEchoPIN);
   Serial.println(fdist);
   delay(100);
   
@@ -29,14 +22,20 @@ void loop() {
 
 
 float sonarDist(int Trig,int Echo){
+  float dist;
   unsigned long duration;
+  if(i > 1) i = 0;
+  else i++;
   digitalWrite(Trig, LOW); 
   delayMicroseconds(2); 
   digitalWrite(Trig, HIGH); 
   delayMicroseconds(10); 
   digitalWrite(Trig, LOW); 
   duration = pulseIn(Echo,HIGH);
-  return (float)duration / 5.75; 
+  dist = (float)duration / 5.75; 
+  if (dist > 260) dist = 260; //ограничиваем макс расстояние до длинны жёлоба
+  dist3[i] = dist;
+  return middle_of_3(dist3[0],dist3[1],dist3[2]);
 }
 
 
