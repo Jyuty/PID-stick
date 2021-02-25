@@ -1,22 +1,35 @@
+#include <GyverPID.h>
+#include <Servo.h>
+#define point 80
 #define sonarTrigPIN 2
 #define sonarEchoPIN 3
-
-//unsigned long duration;
+#define servoPIN 4
+Servo serv;
+GyverPID regul(0.3,0.2,0.15);
 float dist,fdist;
-int i = 0;
+int i = 0,angle;
 float dist3[3] = {0,0,0};
 void setup() {
   Serial.begin(9600);
   pinMode(sonarTrigPIN,OUTPUT);
   pinMode(sonarEchoPIN,INPUT);
-
+  regul.setDirection(NORMAL);
+  regul.setLimits(-58,58);
+  regul.setpoint = point;
+  serv.attach(servoPIN);
 }
 
 void loop() {
   
   fdist = sonarDist(sonarTrigPIN,sonarEchoPIN);
+  regul.input = fdist;
+  angle = regul.getResultTimer();
+  serv.write(60 + angle);
+  Serial.print(point);
+  Serial.print(',');
+  Serial.print(angle);
+  Serial.print(',');
   Serial.println(fdist);
-  delay(100);
   
 }
 
